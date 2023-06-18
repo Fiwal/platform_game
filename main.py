@@ -26,7 +26,7 @@ class Game:
         self.player_on_the_ground = False
         self.clock = pygame.time.Clock()
         self.width_and_height_of_blocks = 70
-        self.blocks = []
+        self.objects = []
         self.offsetX = 0
         self.jump_left = False
         self.jump_right = False
@@ -42,15 +42,23 @@ class Game:
         self.make_ground(43, 50, 6, 10)
         self.make_structures(structure1, 16, 5)
         self.make_structures(structure2, 22, 5)
+        self.objects.append(Block(52, 6, 210, 35, self, "images/platform.png"))
+        self.objects.append(Block(57, 5, 210, 35, self, "images/platform.png"))
+        self.objects.append(Block(62, 7, 210, 35, self, "images/platform.png"))
+        self.make_ground(67, 80, 8, 10)
+        self.make_structures(structure3, 76, 4)
+        self.objects.append(Block(72, 6, 210, 35, self, "images/platform.png"))
+        self.make_structures(structure4, 82, 4)
+        self.make_ground(82, 100, 8, 10)
 
     def make_ground(self, start_y, end_y, start_x, end_x):
 
         for i in range(start_y, end_y):
-            self.blocks.append(Block(i, start_x, self.width_and_height_of_blocks,
-                                     self.width_and_height_of_blocks, self, "images/ground1.png"))
+            self.objects.append(Block(i, start_x, self.width_and_height_of_blocks,
+                                      self.width_and_height_of_blocks, self, "images/ground1.png"))
             for j in range(start_x + 1, end_x):
-                self.blocks.append(Block(i, j, self.width_and_height_of_blocks,
-                                         self.width_and_height_of_blocks, self, "images/ground2.png"))
+                self.objects.append(Block(i, j, self.width_and_height_of_blocks,
+                                          self.width_and_height_of_blocks, self, "images/ground2.png"))
 
     def make_structures(self, structure, start_x, start_y):
 
@@ -59,8 +67,8 @@ class Game:
             for j in range(len(structure[i])):
 
                 if structure[i][j] == "B1":
-                    self.blocks.append(Block(start_x + j, start_y + i, self.width_and_height_of_blocks,
-                                             self.width_and_height_of_blocks, self, "images/block1.png"))
+                    self.objects.append(Block(start_x + j, start_y + i, self.width_and_height_of_blocks,
+                                              self.width_and_height_of_blocks, self, "images/block1.png"))
 
     def main(self):
 
@@ -68,12 +76,12 @@ class Game:
 
         while self.run:
 
+            if self.player.y - self.player.height > self.width:
+                self.run = False
             self.update()
             self.move_player()
             self.check_if_close_game()
             self.draw()
-            if self.player.y > self.width:
-                self.run = False
 
         pygame.quit()
 
@@ -125,7 +133,7 @@ class Game:
 
         self.window.fill(BLUE)
 
-        for i in self.blocks:
+        for i in self.objects:
             if i.y > -1:
                 if i.y < self.width + 1:
                     i.draw()
@@ -142,7 +150,7 @@ class Game:
 
     def check_collision(self):
 
-        for object_to_check_collision in self.blocks:
+        for object_to_check_collision in self.objects:
             if object_to_check_collision.y > self.width / 4 - 200:
                 if object_to_check_collision.y < self.width / 4 + 200:
                     if not self.player.y_Vel == 0:
@@ -161,8 +169,7 @@ class Game:
                         if self.player.x + self.player.width > object_to_check_collision.x:
                             if self.player.y + self.player.height > object_to_check_collision.y and \
                                     self.player.y < object_to_check_collision.y + object_to_check_collision.height:
-                                if self.player.x + self.player.width < object_to_check_collision.x + \
-                                        object_to_check_collision.width / 2:
+                                if self.player.x + self.player.width < object_to_check_collision.x + 10:
                                     self.player.x_Vel = 0
                                     self.player.x = object_to_check_collision.x - self.player.width
                                     self.player.update_rect()
@@ -170,8 +177,7 @@ class Game:
                         if self.player.x < object_to_check_collision.x + object_to_check_collision.width:
                             if self.player.y + self.player.height > object_to_check_collision.y and \
                                     self.player.y < object_to_check_collision.y + object_to_check_collision.height:
-                                if self.player.x > object_to_check_collision.x + object_to_check_collision.width - \
-                                        object_to_check_collision.width / 2:
+                                if self.player.x > object_to_check_collision.x + object_to_check_collision.width - 10:
                                     self.player.x_Vel = 0
                                     self.player.x = object_to_check_collision.x + object_to_check_collision.width
                                     self.player.update_rect()
