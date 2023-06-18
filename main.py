@@ -165,6 +165,16 @@ class Game:
                                     self.jump_right = False
                                     self.player.update_rect()
 
+                        if self.player.y < object_to_check_collision.y + object_to_check_collision.height:
+                            if self.player.x + self.player.width > object_to_check_collision.x and \
+                                    self.player.x < object_to_check_collision.x + object_to_check_collision.width:
+                                if self.player.y > object_to_check_collision.y + object_to_check_collision.height - \
+                                        object_to_check_collision.height / 2:
+                                    self.player.y = object_to_check_collision.y + object_to_check_collision.height
+                                    self.player.y_jump = -5
+                                    self.player.y_Vel = 0
+                                    self.player.update_rect()
+
                     if not self.player.x_Vel == 0:
                         if self.player.x + self.player.width > object_to_check_collision.x:
                             if self.player.y + self.player.height > object_to_check_collision.y and \
