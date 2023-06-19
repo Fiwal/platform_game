@@ -49,7 +49,10 @@ class Game:
         self.make_structures(structure3, 76, 4)
         self.objects.append(Block(72, 6, 210, 35, self, "images/platform.png"))
         self.make_structures(structure4, 82, 4)
-        self.make_ground(82, 100, 8, 10)
+        self.make_structures(structure5, 100, 4)
+        self.make_ground(82, 106, 8, 10)
+        self.objects.append(Block(107.5, 4, 210, 35, self, "images/platform.png"))
+        self.make_ground(112, 120, 8, 10)
 
     def make_ground(self, start_y, end_y, start_x, end_x):
 
@@ -81,7 +84,6 @@ class Game:
             self.update()
             self.move_player()
             self.check_if_close_game()
-            self.draw()
 
         pygame.quit()
 
@@ -89,7 +91,7 @@ class Game:
 
         keys = pygame.key.get_pressed()
 
-        self.check_collision()
+        self.check_collision_and_draw()
         if self.player_on_the_ground:
             if keys[K_d]:
                 self.player.move(1.2)
@@ -129,68 +131,60 @@ class Game:
                 self.run = False
                 break
 
-    def draw(self):
+    def update(self):
+
+        self.offsetX = self.player.x - self.width / 4
+        self.player.update()
+
+    def check_collision_and_draw(self):
 
         self.window.fill(BLUE)
 
         for i in self.objects:
+
+            if i.y > self.width / 4 - 200:
+                if i.y < self.width / 4 + 200:
+                    if not self.player.y_Vel == 0:
+                        if self.player.y + self.player.height > i.y + 1:
+                            if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
+                                if self.player.y + self.player.height < i.y + i.height / 2:
+                                    self.player.y = i.y - self.player.height
+                                    self.player_on_the_ground = True
+                                    self.jump_left = False
+                                    self.jump_right = False
+                                    self.player.update_rect()
+
+                        if self.player.y < i.y + i.height:
+                            if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
+                                if self.player.y > i.y + i.height - i.height / 2:
+                                    self.player.y = i.y + i.height
+                                    self.player.y_jump = -5
+                                    self.player.y_Vel = 0
+                                    self.player.update_rect()
+
+                    if not self.player.x_Vel == 0:
+                        if self.player.x + self.player.width > i.x:
+                            if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
+                                if self.player.x + self.player.width < i.x + 10:
+                                    self.player.x_Vel = 0
+                                    self.player.x = i.x - self.player.width
+                                    self.player.update_rect()
+
+                        if self.player.x < i.x + i.width:
+                            if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
+                                if self.player.x > i.x + i.width - 10:
+                                    self.player.x_Vel = 0
+                                    self.player.x = i.x + i.width
+                                    self.player.update_rect()
+
             if i.y > -1:
                 if i.y < self.width + 1:
                     i.draw()
 
         self.player.draw()
 
-        self.clock.tick(120)
+        self.clock.tick(125)
         pygame.display.flip()
-
-    def update(self):
-
-        self.offsetX = self.player.x - self.width / 4
-        self.player.update()
-
-    def check_collision(self):
-
-        for object_to_check_collision in self.objects:
-            if object_to_check_collision.y > self.width / 4 - 200:
-                if object_to_check_collision.y < self.width / 4 + 200:
-                    if not self.player.y_Vel == 0:
-                        if self.player.y + self.player.height > object_to_check_collision.y + 1:
-                            if self.player.x + self.player.width > object_to_check_collision.x and \
-                                    self.player.x < object_to_check_collision.x + object_to_check_collision.width:
-                                if self.player.y + self.player.height < object_to_check_collision.y + \
-                                        object_to_check_collision.height / 2:
-                                    self.player.y = object_to_check_collision.y - self.player.height
-                                    self.player_on_the_ground = True
-                                    self.jump_left = False
-                                    self.jump_right = False
-                                    self.player.update_rect()
-
-                        if self.player.y < object_to_check_collision.y + object_to_check_collision.height:
-                            if self.player.x + self.player.width > object_to_check_collision.x and \
-                                    self.player.x < object_to_check_collision.x + object_to_check_collision.width:
-                                if self.player.y > object_to_check_collision.y + object_to_check_collision.height - \
-                                        object_to_check_collision.height / 2:
-                                    self.player.y = object_to_check_collision.y + object_to_check_collision.height
-                                    self.player.y_jump = -5
-                                    self.player.y_Vel = 0
-                                    self.player.update_rect()
-
-                    if not self.player.x_Vel == 0:
-                        if self.player.x + self.player.width > object_to_check_collision.x:
-                            if self.player.y + self.player.height > object_to_check_collision.y and \
-                                    self.player.y < object_to_check_collision.y + object_to_check_collision.height:
-                                if self.player.x + self.player.width < object_to_check_collision.x + 10:
-                                    self.player.x_Vel = 0
-                                    self.player.x = object_to_check_collision.x - self.player.width
-                                    self.player.update_rect()
-
-                        if self.player.x < object_to_check_collision.x + object_to_check_collision.width:
-                            if self.player.y + self.player.height > object_to_check_collision.y and \
-                                    self.player.y < object_to_check_collision.y + object_to_check_collision.height:
-                                if self.player.x > object_to_check_collision.x + object_to_check_collision.width - 10:
-                                    self.player.x_Vel = 0
-                                    self.player.x = object_to_check_collision.x + object_to_check_collision.width
-                                    self.player.update_rect()
 
 
 if __name__ == "__main__":
