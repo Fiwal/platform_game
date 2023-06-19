@@ -11,7 +11,7 @@ class Player(GameObject):
         self.game = game
         self.x_Vel = 0
         self.y_jump = 0
-        self.y_Vel = 13
+        self.y_Vel = 16
 
     def jump(self):
 
