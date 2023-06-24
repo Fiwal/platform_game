@@ -1,5 +1,7 @@
+import time
 import pygame
 from pygame.locals import *
+from enemy import Enemy
 from player import Player
 from objects import Object
 from structures import *
@@ -40,8 +42,15 @@ class Game:
 
         self.objects = []
         self.player = Player(self.width / 4, 10, 50, 70, self)
+        self.list_of_enemies = []
 
         self.offsetX = 0
+
+    def add_enemies(self):
+
+        self.list_of_enemies.append(Enemy(1900, 500, 50, 40, self, -3))
+        self.list_of_enemies.append(Enemy(2500, 500, 50, 40, self, 3))
+        self.list_of_enemies.append(Enemy(6300, 500, 50, 40, self, 3))
 
     def add_objects(self):
 
@@ -87,14 +96,20 @@ class Game:
     def main(self):
 
         self.add_objects()
+        self.add_enemies()
 
         while self.run:
 
+            self.check_if_close_game()
+            self.move_player()
+            self.solve_collisions_with_enemies()
+            self.update()
+
             if self.player.y - self.player.height > self.width:
                 self.run = False
-            self.update()
-            self.move_player()
-            self.check_if_close_game()
+
+            self.clock.tick(self.FPS)
+            pygame.display.flip()
 
         pygame.quit()
 
@@ -137,6 +152,9 @@ class Game:
         self.offsetX = self.player.x - self.width / 4
         self.player.update()
 
+        for i in self.list_of_enemies:
+            i.update()
+
     def solve_collision_and_draw(self):
 
         self.window.fill(BLUE)
@@ -151,7 +169,6 @@ class Game:
                                 if self.player.y + self.player.height < i.y + i.height / 2:
                                     self.player.y = i.y - self.player.height
                                     self.player_on_the_ground = True
-                                    self.player.update_rect()
 
                         if self.player.y < i.y + i.height:
                             if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
@@ -159,7 +176,6 @@ class Game:
                                     self.player.y = i.y + i.height
                                     self.player.y_jump = -5
                                     self.player.y_Vel = 0
-                                    self.player.update_rect()
 
                     if not self.player.x_Vel == 0:
                         if self.player.x + self.player.width > i.x:
@@ -167,23 +183,30 @@ class Game:
                                 if self.player.x + self.player.width < i.x + 10:
                                     self.player.x_Vel = 0
                                     self.player.x = i.x - self.player.width
-                                    self.player.update_rect()
 
                         if self.player.x < i.x + i.width:
                             if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
                                 if self.player.x > i.x + i.width - 10:
                                     self.player.x_Vel = 0
                                     self.player.x = i.x + i.width
-                                    self.player.update_rect()
 
             if i.y > -1:
                 if i.y < self.width + 1:
                     i.draw()
 
+        for i in self.list_of_enemies:
+            i.draw()
+
         self.player.draw()
 
-        self.clock.tick(self.FPS)
-        pygame.display.flip()
+    def solve_collisions_with_enemies(self):
+
+        for i in self.list_of_enemies:
+
+            if self.player.rect.colliderect(i.rect):
+
+                time.sleep(2)
+                self.run = False
 
 
 if __name__ == "__main__":

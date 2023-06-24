@@ -29,11 +29,11 @@ class Player(GameObject):
 
         self.y += self.y_Vel + self.y_jump
 
-        self.rect = Rect(self.x, self.y, self.width, self.height)
+        self.update_rect()
 
     def move(self, x):
 
         self.x_Vel += x
 
     def update_rect(self):
-        self.rect = Rect(self.x - self.width / 2, self.y - self.height / 2, self.width, self.height)
+        self.rect = Rect(self.x, self.y, self.width, self.height)
