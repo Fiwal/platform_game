@@ -1,5 +1,5 @@
 # platform_game
 sterowanie:
-skok -> "w",
-ruch w lewo -> "a",
-ruch w prawo -> "d"
+1. skok -> "w",
+2. ruch w lewo -> "a",
+3. ruch w prawo -> "d"
