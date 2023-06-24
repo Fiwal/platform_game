@@ -1,4 +1,3 @@
-import time
 import pygame
 from pygame.locals import *
 from enemy import Enemy
@@ -205,7 +204,6 @@ class Game:
 
             if self.player.rect.colliderect(i.rect):
 
-                time.sleep(2)
                 self.run = False
 
 
