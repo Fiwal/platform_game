@@ -102,8 +102,8 @@ class Game:
 
             self.check_if_close_game()
             self.move_player()
-            self.solve_collisions_with_enemies()
             self.update()
+            self.solve_collisions_with_enemies()
 
             if self.player.y - self.player.height > self.width:
                 self.run = False
