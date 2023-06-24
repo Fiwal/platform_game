@@ -11,7 +11,7 @@ class Player(GameObject):
         self.game = game
         self.x_Vel = 0
         self.y_jump = 0
-        self.y_Vel = 16
+        self.y_Vel = game.GRAVITY
 
     def jump(self):
 
@@ -23,7 +23,7 @@ class Player(GameObject):
 
     def update(self):
 
-        self.x_Vel *= 0.80
+        self.x_Vel *= 0.90
 
         self.x += self.x_Vel
 

@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from player import Player
-from block import Block
+from objects import Object
 from structures import *
 
 BLACK = (0, 0, 0)
@@ -21,61 +21,72 @@ class Game:
         self.width = width
         self.height = height
         self.window = pygame.display.set_mode((self.width, self.height))
-        self.is_jump = False
-        self.run = True
-        self.player_on_the_ground = False
+
         self.clock = pygame.time.Clock()
-        self.width_and_height_of_blocks = 70
-        self.objects = []
-        self.offsetX = 0
-        self.jump_left = False
-        self.jump_right = False
+
+        # init game:
+
+        self.run = True
+
+        self.GRAVITY = 1
+        self.FPS = 110
+
+        self.player_on_the_ground = False
+        self.is_jump = False
+
         pygame.display.set_caption('platform_game')
 
+        self.width_and_height_of_blocks = 70
+
+        self.objects = []
         self.player = Player(self.width / 4, 10, 50, 70, self)
 
-    def make_blocks(self):
+        self.offsetX = 0
 
-        self.make_ground(-8, 20, 8, 10)
-        self.make_ground(22, 40, 8, 10)
-        self.make_ground(40, 43, 7, 10)
-        self.make_ground(43, 50, 6, 10)
-        self.make_structures(structure1, 16, 5)
-        self.make_structures(structure2, 22, 5)
-        self.objects.append(Block(52, 6, 210, 35, self, "images/platform.png"))
-        self.objects.append(Block(57, 5, 210, 35, self, "images/platform.png"))
-        self.objects.append(Block(62, 7, 210, 35, self, "images/platform.png"))
-        self.make_ground(67, 80, 8, 10)
-        self.make_structures(structure3, 76, 4)
-        self.objects.append(Block(72, 6, 210, 35, self, "images/platform.png"))
-        self.make_structures(structure4, 82, 4)
-        self.make_structures(structure5, 100, 4)
-        self.make_ground(82, 106, 8, 10)
-        self.objects.append(Block(107.5, 4, 210, 35, self, "images/platform.png"))
-        self.make_ground(112, 120, 8, 10)
+    def add_objects(self):
 
-    def make_ground(self, start_y, end_y, start_x, end_x):
+        self.add_ground(-8, 20, 8, 10)
+        self.add_ground(22, 40, 8, 10)
+        self.add_ground(40, 43, 7, 10)
+        self.add_ground(43, 50, 6, 10)
+        self.add_ground(67, 80, 8, 10)
+        self.add_ground(82, 106, 8, 10)
+        self.add_ground(112, 120, 8, 10)
+
+        self.add_structures(structure1, 16, 5)
+        self.add_structures(structure2, 22, 5)
+        self.add_structures(structure3, 76, 4)
+        self.add_structures(structure4, 82, 4)
+        self.add_structures(structure5, 100, 4)
+
+        self.objects.append(Object(52, 6, 210, 35, self, "images/platform.png"))
+        self.objects.append(Object(57, 5, 210, 35, self, "images/platform.png"))
+        self.objects.append(Object(62, 7, 210, 35, self, "images/platform.png"))
+        self.objects.append(Object(72, 6, 210, 35, self, "images/platform.png"))
+        self.objects.append(Object(107.5, 4, 210, 35, self, "images/platform.png"))
+
+    def add_ground(self, start_y, end_y, start_x, end_x):
 
         for i in range(start_y, end_y):
-            self.objects.append(Block(i, start_x, self.width_and_height_of_blocks,
-                                      self.width_and_height_of_blocks, self, "images/ground1.png"))
+            self.objects.append(Object(i, start_x, self.width_and_height_of_blocks,
+                                       self.width_and_height_of_blocks, self, "images/ground1.png"))
             for j in range(start_x + 1, end_x):
-                self.objects.append(Block(i, j, self.width_and_height_of_blocks,
-                                          self.width_and_height_of_blocks, self, "images/ground2.png"))
+                self.objects.append(Object(i, j, self.width_and_height_of_blocks,
+                                           self.width_and_height_of_blocks, self, "images/ground2.png"))
 
-    def make_structures(self, structure, start_x, start_y):
+    def add_structures(self, structure, start_x, start_y):
 
         for i in range(len(structure)):
 
             for j in range(len(structure[i])):
 
                 if structure[i][j] == "B1":
-                    self.objects.append(Block(start_x + j, start_y + i, self.width_and_height_of_blocks,
-                                              self.width_and_height_of_blocks, self, "images/block1.png"))
+                    self.objects.append(Object(start_x + j, start_y + i, self.width_and_height_of_blocks,
+                                               self.width_and_height_of_blocks, self, "images/block1.png"))
 
     def main(self):
 
-        self.make_blocks()
+        self.add_objects()
 
         while self.run:
 
@@ -91,12 +102,12 @@ class Game:
 
         keys = pygame.key.get_pressed()
 
-        self.check_collision_and_draw()
-        if self.player_on_the_ground:
+        self.solve_collision_and_draw()
+        if self.player_on_the_ground or self.is_jump:
             if keys[K_d]:
-                self.player.move(1.2)
+                self.player.move(0.7)
             elif keys[K_a]:
-                self.player.move(-1.2)
+                self.player.move(-0.7)
 
         if not self.player_on_the_ground:
             self.player.y_Vel = 13
@@ -104,10 +115,7 @@ class Game:
         if self.player_on_the_ground:
 
             if keys[K_w]:
-                if keys[K_d]:
-                    self.jump_right = True
-                elif keys[K_a]:
-                    self.jump_left = True
+
                 self.player.y_jump = -29.5
                 self.is_jump = True
                 self.player_on_the_ground = False
@@ -115,13 +123,6 @@ class Game:
         if self.is_jump:
 
             self.player.jump()
-
-        if not self.player_on_the_ground:
-
-            if self.jump_right:
-                self.player.move(1.2)
-            elif self.jump_left:
-                self.player.move(-1.2)
 
         self.player_on_the_ground = False
 
@@ -136,7 +137,7 @@ class Game:
         self.offsetX = self.player.x - self.width / 4
         self.player.update()
 
-    def check_collision_and_draw(self):
+    def solve_collision_and_draw(self):
 
         self.window.fill(BLUE)
 
@@ -150,8 +151,6 @@ class Game:
                                 if self.player.y + self.player.height < i.y + i.height / 2:
                                     self.player.y = i.y - self.player.height
                                     self.player_on_the_ground = True
-                                    self.jump_left = False
-                                    self.jump_right = False
                                     self.player.update_rect()
 
                         if self.player.y < i.y + i.height:
@@ -183,7 +182,7 @@ class Game:
 
         self.player.draw()
 
-        self.clock.tick(125)
+        self.clock.tick(self.FPS)
         pygame.display.flip()
 
 

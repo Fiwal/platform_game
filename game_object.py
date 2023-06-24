@@ -17,8 +17,5 @@ class GameObject:
 
     def draw(self):
 
-        self.update_poz()
-        self.game.window.blit(self.img, (self.x, self.y))
-
-    def update_poz(self):
-        self.x -= self.game.offsetX
+        drawX = self.x - self.game.offsetX
+        self.game.window.blit(self.img, (drawX, self.y))

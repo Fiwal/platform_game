@@ -1,7 +1,7 @@
 from game_object import GameObject
 
 
-class Block(GameObject):
+class Object(GameObject):
 
     def __init__(self, x, y: int, width: int, height: int, game, image):
 
