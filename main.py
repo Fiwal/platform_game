@@ -40,6 +40,7 @@ class Game:
         self.width_and_height_of_blocks = 70
 
         self.objects = []
+        self.background_objects = []
         self.player = Player(self.width / 4, 10, 50, 70, self)
         self.list_of_enemies = []
 
@@ -73,6 +74,12 @@ class Game:
         self.objects.append(Object(72, 6, 210, 35, self, "images/platform.png"))
         self.objects.append(Object(107.5, 4, 210, 35, self, "images/platform.png"))
 
+        self.background_objects.append(Object(7.5, 3, 263, 350, self, "images/tree.png"))
+        self.background_objects.append(Object(4, 4, 211, 280, self, "images/tree.png"))
+        self.background_objects.append(Object(29, 3, 263, 350, self, "images/tree.png"))
+        self.background_objects.append(Object(68.5, 4, 211, 280, self, "images/tree.png"))
+        self.background_objects.append(Object(92, 3, 263, 350, self, "images/tree.png"))
+
     def add_ground(self, start_y, end_y, start_x, end_x):
 
         for i in range(start_y, end_y):
@@ -102,10 +109,12 @@ class Game:
             self.check_if_close_game()
             self.move_player()
             self.update()
-            self.solve_collisions_with_enemies()
+            # self.solve_collisions_with_enemies()
 
             if self.player.y - self.player.height > self.width:
                 self.run = False
+
+            print(self.player.x / 70)
 
             self.clock.tick(self.FPS)
             pygame.display.flip()
@@ -193,8 +202,11 @@ class Game:
                 if i.y < self.width + 1:
                     i.draw()
 
-        for i in self.list_of_enemies:
-            i.draw()
+        for k in self.background_objects:
+            k.draw()
+
+        for j in self.list_of_enemies:
+            j.draw()
 
         self.player.draw()
 
