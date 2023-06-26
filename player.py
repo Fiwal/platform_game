@@ -16,7 +16,7 @@ class Player(GameObject):
     def jump(self):
 
         if not self.y_jump > 0:
-            self.y_jump += 0.8
+            self.y_jump += 1
 
         else:
             self.game.is_jump = False

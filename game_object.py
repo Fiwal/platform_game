@@ -17,5 +17,4 @@ class GameObject:
 
     def draw(self):
 
-        drawX = self.x - self.game.offsetX
-        self.game.window.blit(self.img, (drawX, self.y))
+        self.game.window.blit(self.img, (self.x - self.game.offsetX, self.y))

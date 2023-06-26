@@ -1,8 +1,11 @@
 import pygame
 from pygame.locals import *
+
 from enemy import Enemy
 from player import Player
 from objects import Object
+from grass import Grass
+
 from structures import *
 
 BLACK = (0, 0, 0)
@@ -30,7 +33,7 @@ class Game:
         self.run = True
 
         self.GRAVITY = 1
-        self.FPS = 110
+        self.FPS = 80
 
         self.player_on_the_ground = False
         self.is_jump = False
@@ -41,7 +44,8 @@ class Game:
 
         self.objects = []
         self.background_objects = []
-        self.player = Player(self.width / 4, 10, 50, 70, self)
+        self.grass = []
+        self.player = Player(self.width / 4, 300, 50, 70, self)
         self.list_of_enemies = []
 
         self.offsetX = 0
@@ -80,6 +84,12 @@ class Game:
         self.background_objects.append(Object(68.5, 4, 211, 280, self, "images/tree.png"))
         self.background_objects.append(Object(92, 3, 263, 350, self, "images/tree.png"))
 
+        self.add_grass(-8, 16, 7)
+        self.add_grass(29, 35, 7)
+        self.add_grass(40, 43, 6)
+        self.add_grass(43, 50, 5)
+        self.add_grass(68, 73, 7)
+
     def add_ground(self, start_y, end_y, start_x, end_x):
 
         for i in range(start_y, end_y):
@@ -99,6 +109,12 @@ class Game:
                     self.objects.append(Object(start_x + j, start_y + i, self.width_and_height_of_blocks,
                                                self.width_and_height_of_blocks, self, "images/block1.png"))
 
+    def add_grass(self, start_y, end_y, x):
+
+        for i in range(start_y, end_y):
+
+            self.grass.append(Grass(i, x, self.width_and_height_of_blocks, self.width_and_height_of_blocks, self))
+
     def main(self):
 
         self.add_objects()
@@ -109,15 +125,15 @@ class Game:
             self.check_if_close_game()
             self.move_player()
             self.update()
-            # self.solve_collisions_with_enemies()
+            self.solve_collisions_with_enemies()
 
             if self.player.y - self.player.height > self.width:
                 self.run = False
 
-            print(self.player.x / 70)
-
             self.clock.tick(self.FPS)
             pygame.display.flip()
+
+            # print(self.player.x / 70)
 
         pygame.quit()
 
@@ -128,9 +144,9 @@ class Game:
         self.solve_collision_and_draw()
         if self.player_on_the_ground or self.is_jump:
             if keys[K_d]:
-                self.player.move(0.7)
+                self.player.move(0.9)
             elif keys[K_a]:
-                self.player.move(-0.7)
+                self.player.move(-0.9)
 
         if not self.player_on_the_ground:
             self.player.y_Vel = 13
@@ -139,7 +155,7 @@ class Game:
 
             if keys[K_w]:
 
-                self.player.y_jump = -29.5
+                self.player.y_jump = -31
                 self.is_jump = True
                 self.player_on_the_ground = False
 
@@ -163,14 +179,19 @@ class Game:
         for i in self.list_of_enemies:
             i.update()
 
+        for j in self.grass:
+            if j.x - self.offsetX > -300:
+                if j.x - self.offsetX < self.width:
+                    j.update()
+
     def solve_collision_and_draw(self):
 
         self.window.fill(BLUE)
 
         for i in self.objects:
 
-            if i.y > self.width / 4 - 200:
-                if i.y < self.width / 4 + 200:
+            if i.x - self.offsetX > -300:
+                if i.x - self.offsetX < self.width:
                     if not self.player.y_Vel == 0:
                         if self.player.y + self.player.height > i.y + 1:
                             if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
@@ -198,15 +219,22 @@ class Game:
                                     self.player.x_Vel = 0
                                     self.player.x = i.x + i.width
 
-            if i.y > -1:
-                if i.y < self.width + 1:
                     i.draw()
 
         for k in self.background_objects:
-            k.draw()
+            if k.x - self.offsetX > -300:
+                if k.x - self.offsetX < self.width:
+                    k.draw()
 
         for j in self.list_of_enemies:
-            j.draw()
+            if j.x - self.offsetX > -300:
+                if j.x - self.offsetX < self.width:
+                    j.draw()
+
+        for i in self.grass:
+            if i.x - self.offsetX > -300:
+                if i.x - self.offsetX < self.width:
+                    i.draw()
 
         self.player.draw()
 
