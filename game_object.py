@@ -4,7 +4,7 @@ from pygame import Rect
 
 class GameObject:
 
-    def __init__(self, x, y: int, width: int, height: int, game, image_src):
+    def __init__(self, x: int, y: int, width: int, height: int, game, image_src):
 
         self.x = x
         self.y = y

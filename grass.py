@@ -9,7 +9,7 @@ class Grass(GameObject):
         self.type_of_grass = 1
         self.image = f"images/grass{self.type_of_grass}.png"
 
-        super().__init__(x * game.width_and_height_of_blocks, y * game.width_and_height_of_blocks,
+        super().__init__(x * game.size_of_blocks, y * game.size_of_blocks,
                          width, height, game, self.image)
 
         self.start_ticks = pygame.time.get_ticks()

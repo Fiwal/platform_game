@@ -5,6 +5,7 @@ from enemy import Enemy
 from player import Player
 from objects import Object
 from grass import Grass
+from explosion import Explosion
 
 from structures import *
 
@@ -40,13 +41,16 @@ class Game:
 
         pygame.display.set_caption('platform_game')
 
-        self.width_and_height_of_blocks = 70
+        self.size_of_blocks = 70
 
         self.objects = []
         self.background_objects = []
         self.grass = []
+
         self.player = Player(self.width / 4, 300, 50, 70, self)
         self.list_of_enemies = []
+
+        self.explosions = []
 
         self.offsetX = 0
 
@@ -84,20 +88,37 @@ class Game:
         self.background_objects.append(Object(68.5, 4, 211, 280, self, "images/tree.png"))
         self.background_objects.append(Object(92, 3, 263, 350, self, "images/tree.png"))
 
+        self.background_objects.append(Object(3, 7, self.size_of_blocks, self.size_of_blocks,
+                                              self, "images/mushroom.png"))
+        self.background_objects.append(Object(14, 7, self.size_of_blocks, self.size_of_blocks,
+                                              self, "images/mushroom.png"))
+        self.background_objects.append(Object(32, 7, self.size_of_blocks, self.size_of_blocks,
+                                              self, "images/mushroom.png"))
+        self.background_objects.append(Object(48, 5, self.size_of_blocks, self.size_of_blocks,
+                                              self, "images/mushroom.png"))
+        self.background_objects.append(Object(91, 7, self.size_of_blocks, self.size_of_blocks,
+                                              self, "images/mushroom.png"))
+
+        self.background_objects.append(Object(18.5, 3, 70, 140, self, "images/plant.png"))
+        self.background_objects.append(Object(57.5, 3, 70, 140, self, "images/plant.png"))
+        self.background_objects.append(Object(63.5, 5, 70, 140, self, "images/plant.png"))
+        self.background_objects.append(Object(104.5, 2, 70, 140, self, "images/plant.png"))
+
         self.add_grass(-8, 16, 7)
         self.add_grass(29, 35, 7)
         self.add_grass(40, 43, 6)
         self.add_grass(43, 50, 5)
         self.add_grass(68, 73, 7)
+        self.add_grass(90, 97, 7)
 
-    def add_ground(self, start_y, end_y, start_x, end_x):
+    def add_ground(self, start_x, end_x, start_y, end_y):
 
-        for i in range(start_y, end_y):
-            self.objects.append(Object(i, start_x, self.width_and_height_of_blocks,
-                                       self.width_and_height_of_blocks, self, "images/ground1.png"))
-            for j in range(start_x + 1, end_x):
-                self.objects.append(Object(i, j, self.width_and_height_of_blocks,
-                                           self.width_and_height_of_blocks, self, "images/ground2.png"))
+        for i in range(start_x, end_x):
+            self.objects.append(Object(i, start_y, self.size_of_blocks,
+                                       self.size_of_blocks, self, "images/ground1.png"))
+            for j in range(start_y + 1, end_y):
+                self.objects.append(Object(i, j, self.size_of_blocks,
+                                           self.size_of_blocks, self, "images/ground2.png"))
 
     def add_structures(self, structure, start_x, start_y):
 
@@ -106,14 +127,14 @@ class Game:
             for j in range(len(structure[i])):
 
                 if structure[i][j] == "B1":
-                    self.objects.append(Object(start_x + j, start_y + i, self.width_and_height_of_blocks,
-                                               self.width_and_height_of_blocks, self, "images/block1.png"))
+                    self.objects.append(Object(start_x + j, start_y + i, self.size_of_blocks,
+                                               self.size_of_blocks, self, "images/block1.png"))
 
-    def add_grass(self, start_y, end_y, x):
+    def add_grass(self, start_x, end_x, y):
 
-        for i in range(start_y, end_y):
+        for i in range(start_x, end_x):
 
-            self.grass.append(Grass(i, x, self.width_and_height_of_blocks, self.width_and_height_of_blocks, self))
+            self.grass.append(Grass(i, y, self.size_of_blocks, self.size_of_blocks, self))
 
     def main(self):
 
@@ -133,7 +154,7 @@ class Game:
             self.clock.tick(self.FPS)
             pygame.display.flip()
 
-            # print(self.player.x / 70)
+            print(self.explosions)
 
         pygame.quit()
 
@@ -184,6 +205,11 @@ class Game:
                 if j.x - self.offsetX < self.width:
                     j.update()
 
+        for k in self.explosions:
+            k.update()
+            if k.end_explosion:
+                self.explosions.pop(self.explosions.index(k))
+
     def solve_collision_and_draw(self):
 
         self.window.fill(BLUE)
@@ -226,15 +252,18 @@ class Game:
                 if k.x - self.offsetX < self.width:
                     k.draw()
 
+        for i in self.grass:
+            if i.x - self.offsetX > -300:
+                if i.x - self.offsetX < self.width:
+                    i.draw()
+
         for j in self.list_of_enemies:
             if j.x - self.offsetX > -300:
                 if j.x - self.offsetX < self.width:
                     j.draw()
 
-        for i in self.grass:
-            if i.x - self.offsetX > -300:
-                if i.x - self.offsetX < self.width:
-                    i.draw()
+        for k in self.explosions:
+            k.draw()
 
         self.player.draw()
 
@@ -244,7 +273,8 @@ class Game:
 
             if self.player.rect.colliderect(i.rect):
 
-                self.run = False
+                self.explosions.append(Explosion(i.x + i.width / 2, i.y + i.height / 2, self))
+                self.list_of_enemies.pop(self.list_of_enemies.index(i))
 
 
 if __name__ == "__main__":
