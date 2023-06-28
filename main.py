@@ -5,7 +5,6 @@ from enemy import Enemy
 from player import Player
 from objects import Object
 from grass import Grass
-from explosion import Explosion
 
 from structures import *
 
@@ -154,8 +153,6 @@ class Game:
             self.clock.tick(self.FPS)
             pygame.display.flip()
 
-            print(self.explosions)
-
         pygame.quit()
 
     def move_player(self):
@@ -165,9 +162,9 @@ class Game:
         self.solve_collision_and_draw()
         if self.player_on_the_ground or self.is_jump:
             if keys[K_d]:
-                self.player.move(0.9)
+                self.player.move(0.7)
             elif keys[K_a]:
-                self.player.move(-0.9)
+                self.player.move(-0.7)
 
         if not self.player_on_the_ground:
             self.player.y_Vel = 13
@@ -262,19 +259,37 @@ class Game:
                 if j.x - self.offsetX < self.width:
                     j.draw()
 
+        self.player.draw()
+
         for k in self.explosions:
             k.draw()
-
-        self.player.draw()
 
     def solve_collisions_with_enemies(self):
 
         for i in self.list_of_enemies:
 
-            if self.player.rect.colliderect(i.rect):
+            if not i.explosion:
+                if self.player.x < i.x:
 
-                self.explosions.append(Explosion(i.x + i.width / 2, i.y + i.height / 2, self))
-                self.list_of_enemies.pop(self.list_of_enemies.index(i))
+                    distance_to_player = i.x - self.player.x + self.player.width
+
+                    if distance_to_player <= 200:
+
+                        i.start_ticks_to_explosion = pygame.time.get_ticks()
+                        i.start_ticks_for_animation = pygame.time.get_ticks()
+                        i.explosion = True
+
+                if self.player.x > i.x:
+
+                    distance_to_player = self.player.x - (i.x + i.width)
+
+                    print(distance_to_player)
+
+                    if distance_to_player <= 200:
+
+                        i.start_ticks_to_explosion = pygame.time.get_ticks()
+                        i.start_ticks_for_animation = pygame.time.get_ticks()
+                        i.explosion = True
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import random
+import pygame
 from pygame import Rect
 from game_object import GameObject
 
@@ -32,14 +33,14 @@ class Rubble(GameObject):
         self.x_vel = x_vel
         self.y_vel = y_vel
         self.game = game
+        self.time_to_delete = random.randint(10, 30)
 
     def update(self):
 
         if not self.y_vel > 0:
-            self.y_vel += 0.1
-            self.y_vel *= 0.99
+            self.y_vel += 0.15
 
-        self.y_vel += self.game.GRAVITY * 0.076
+        self.y_vel += self.game.GRAVITY / 10
 
         self.y += self.y_vel
 
@@ -64,20 +65,21 @@ class Explosion:
 
         self.add_smoke_and_rubble()
 
+        self.start_explosion = pygame.time.get_ticks()
         self.end_explosion = False
 
     def add_smoke_and_rubble(self):
 
-        for i in range(20):
+        for i in range(30):
             random_x_vel = random.uniform(-4, 4)
             random_y_vel = random.uniform(-9, -13)
-            random_size = random.randint(60, 90)
+            random_size = random.randint(60, 100)
             random_image = random.randint(1, 3)
             self.smoke.append(Smoke(self.x, self.y, random_size, random_size, random_x_vel,
                               random_y_vel, f"images/Elements_to_explosion/smoke_{random_image}.png", self.game))
 
         for i in range(40):
-            random_x_vel = random.uniform(-3.5, 3.5)
+            random_x_vel = random.uniform(-5, 5)
             random_y_vel = random.uniform(-9, -13)
             random_size = random.randint(10, 20)
             random_image = random.randint(1, 3)
@@ -92,8 +94,11 @@ class Explosion:
                 self.smoke.pop(self.smoke.index(i))
                 i.x_vel = 0
 
+        seconds = (pygame.time.get_ticks() - self.start_explosion) / 1000
         for i in self.rubble:
             i.update()
+            if i.time_to_delete < seconds:
+                self.rubble.pop(self.rubble.index(i))
 
         self.solve_collisions()
 
@@ -110,11 +115,26 @@ class Explosion:
 
     def solve_collisions(self):
 
-        for i in self.rubble:
+        for j in self.rubble:
 
-            for j in self.game.objects:
+            for i in self.game.objects:
 
-                if i.rect.colliderect(j.rect):
+                if not j.y_vel == 0:
+                    if j.y + j.height > i.y + 1:
+                        if j.x + j.width > i.x and j.x < i.x + i.width:
+                            if j.y + j.height < i.y + i.height:
+                                j.y = i.y - j.height
+                                j.y_vel = 0
 
-                    self.rubble.pop(self.rubble.index(i))
-                    break
+                if not j.x_vel == 0:
+                    if j.x + j.width > i.x:
+                        if j.y + j.height > i.y and j.y < i.y + i.height:
+                            if j.x + j.width < i.x + 10:
+                                j.x_vel = 0
+                                j.x = i.x - j.width
+
+                    if j.x < i.x + i.width:
+                        if j.y + j.height > i.y and j.y < i.y + i.height:
+                            if j.x > i.x + i.width - 10:
+                                j.x_vel = 0
+                                j.x = i.x + i.width

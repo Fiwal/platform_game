@@ -1,18 +1,28 @@
+import pygame
 from pygame import Rect
 from game_object import GameObject
+from explosion import Explosion
 
 
 class Enemy(GameObject):
 
-    def __init__(self, x: int, y: int, width: int, height: int, game, start_x_Vel):
+    def __init__(self, x: int, y: int, width: int, height: int, game, x_speed):
 
         super().__init__(x, y, width, height, game, "images/enemy.png")
 
         self.game = game
-        self.x_Vel = start_x_Vel
+        self.x_Vel = x_speed
         self.y_Vel = 20
+        self.explosion = False
+        self.start_ticks_to_explosion = 0
+        self.start_ticks_for_animation = 0
+        self.explosion_type_of_enemy = 1
 
     def update(self):
+
+        if self.explosion:
+
+            self.explosion_enemy()
 
         self.x += self.x_Vel
         self.y += self.y_Vel
@@ -42,3 +52,31 @@ class Enemy(GameObject):
                     if self.y + self.height > i.y and self.y < i.y + i.height:
                         if self.x > i.x + i.width - 10:
                             self.x_Vel = 3
+
+    def explosion_enemy(self):
+
+        self.after_explosion_animation()
+
+        self.x_Vel = 0
+        seconds = (pygame.time.get_ticks() - self.start_ticks_to_explosion) / 1000
+
+        if seconds > 0.3:
+            self.game.explosions.append(Explosion(self.x + self.width / 2, self.y, self.game))
+            self.game.list_of_enemies.pop(self.game.list_of_enemies.index(self))
+
+    def after_explosion_animation(self):
+
+        seconds = (pygame.time.get_ticks() - self.start_ticks_for_animation) / 1000
+
+        if seconds > 0.05:
+            if self.explosion_type_of_enemy == 1:
+
+                self.img = pygame.transform.scale(pygame.image.load("images/enemy.png"), (self.width, self.height))
+                self.explosion_type_of_enemy = 2
+
+            elif self.explosion_type_of_enemy == 2:
+                self.img = pygame.transform.scale(pygame.image.load("images/explosion_enemy.png"),
+                                                  (self.width, self.height))
+                self.explosion_type_of_enemy = 1
+
+            self.start_ticks_for_animation = pygame.time.get_ticks()
