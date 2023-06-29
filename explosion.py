@@ -50,6 +50,38 @@ class Rubble(GameObject):
         self.rect = Rect(self.x, self.y, self.height, self.width)
 
 
+class Zone(GameObject):
+
+    def __init__(self, x, y, width, height, image, game):
+
+        self.start_x = x
+        self.start_y = y
+
+        self.plus_size = 20
+
+        self.x = self.start_x - width / 2
+        self.y = self.start_y - height / 2
+        self.image = image
+
+        self.time_to_delete = 0.7
+
+        super().__init__(self.x, self.y, width, height, game, image)
+
+    def update(self):
+
+        if not self.plus_size < 0:
+            self.width += self.plus_size
+            self.height += self.plus_size
+
+        self.x = self.start_x - self.width / 2
+        self.y = self.start_y - self.height / 2
+        self.img = self.img = pygame.transform.scale(pygame.image.load(self.image), (self.width, self.height))
+
+        self.rect = Rect(self.x, self.y, self.width, self.height)
+
+        self.plus_size -= 0.3
+
+
 class Explosion:
 
     def __init__(self, x, y, game):
@@ -62,6 +94,9 @@ class Explosion:
 
         self.smoke = []
         self.rubble = []
+
+        self.danger_zone = []
+        self.danger_zone.append(Zone(x, y, 50, 50, "images/Elements_to_explosion/danger_zone.png", self.game))
 
         self.add_smoke_and_rubble()
 
@@ -100,12 +135,20 @@ class Explosion:
             if i.time_to_delete < seconds:
                 self.rubble.pop(self.rubble.index(i))
 
-        self.solve_collisions()
+            self.solve_collisions(i)
+
+        for i in self.danger_zone:
+            i.update()
+            if i.time_to_delete < seconds:
+                self.danger_zone.pop(self.danger_zone.index(i))
 
         if len(self.rubble) == 0 and len(self.smoke) == 0:
             self.end_explosion = True
 
     def draw(self):
+
+        for i in self.danger_zone:
+            i.draw()
 
         for i in self.smoke:
             i.draw()
@@ -113,28 +156,26 @@ class Explosion:
         for i in self.rubble:
             i.draw()
 
-    def solve_collisions(self):
+    def solve_collisions(self, j):
 
-        for j in self.rubble:
+        for i in self.game.objects:
 
-            for i in self.game.objects:
+            if not j.y_vel == 0:
+                if j.y + j.height > i.y + 1:
+                    if j.x + j.width > i.x and j.x < i.x + i.width:
+                        if j.y + j.height < i.y + i.height:
+                            j.y = i.y - j.height
+                            j.y_vel = 0
 
-                if not j.y_vel == 0:
-                    if j.y + j.height > i.y + 1:
-                        if j.x + j.width > i.x and j.x < i.x + i.width:
-                            if j.y + j.height < i.y + i.height:
-                                j.y = i.y - j.height
-                                j.y_vel = 0
+            if not j.x_vel == 0:
+                if j.x + j.width > i.x:
+                    if j.y + j.height > i.y and j.y < i.y + i.height:
+                        if j.x + j.width < i.x + 10:
+                            j.x_vel = 0
+                            j.x = i.x - j.width
 
-                if not j.x_vel == 0:
-                    if j.x + j.width > i.x:
-                        if j.y + j.height > i.y and j.y < i.y + i.height:
-                            if j.x + j.width < i.x + 10:
-                                j.x_vel = 0
-                                j.x = i.x - j.width
-
-                    if j.x < i.x + i.width:
-                        if j.y + j.height > i.y and j.y < i.y + i.height:
-                            if j.x > i.x + i.width - 10:
-                                j.x_vel = 0
-                                j.x = i.x + i.width
+                if j.x < i.x + i.width:
+                    if j.y + j.height > i.y and j.y < i.y + i.height:
+                        if j.x > i.x + i.width - 10:
+                            j.x_vel = 0
+                            j.x = i.x + i.width

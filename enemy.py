@@ -17,6 +17,7 @@ class Enemy(GameObject):
         self.start_ticks_to_explosion = 0
         self.start_ticks_for_animation = 0
         self.explosion_type_of_enemy = 1
+        self.eyeshot = Rect(self.x / 2 - 200, self.y + self.height - 200, 400, 200)
 
     def update(self):
 
@@ -31,6 +32,7 @@ class Enemy(GameObject):
 
     def update_rect(self):
         self.rect = Rect(self.x, self.y, self.width, self.height)
+        self.eyeshot = Rect(self.x + self.width / 2 - 150, self.y + self.height - 100, 300, 100)
 
     def solve_collision(self):
 
@@ -60,7 +62,7 @@ class Enemy(GameObject):
         self.x_Vel = 0
         seconds = (pygame.time.get_ticks() - self.start_ticks_to_explosion) / 1000
 
-        if seconds > 0.3:
+        if seconds > 0.5:
             self.game.explosions.append(Explosion(self.x + self.width / 2, self.y, self.game))
             self.game.list_of_enemies.pop(self.game.list_of_enemies.index(self))
 

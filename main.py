@@ -269,27 +269,12 @@ class Game:
         for i in self.list_of_enemies:
 
             if not i.explosion:
-                if self.player.x < i.x:
 
-                    distance_to_player = i.x - self.player.x + self.player.width
+                if self.player.rect.colliderect(i.eyeshot):
 
-                    if distance_to_player <= 200:
-
-                        i.start_ticks_to_explosion = pygame.time.get_ticks()
-                        i.start_ticks_for_animation = pygame.time.get_ticks()
-                        i.explosion = True
-
-                if self.player.x > i.x:
-
-                    distance_to_player = self.player.x - (i.x + i.width)
-
-                    print(distance_to_player)
-
-                    if distance_to_player <= 200:
-
-                        i.start_ticks_to_explosion = pygame.time.get_ticks()
-                        i.start_ticks_for_animation = pygame.time.get_ticks()
-                        i.explosion = True
+                    i.start_ticks_to_explosion = pygame.time.get_ticks()
+                    i.start_ticks_for_animation = pygame.time.get_ticks()
+                    i.explosion = True
 
 
 if __name__ == "__main__":

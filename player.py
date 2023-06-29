@@ -1,3 +1,4 @@
+import pygame
 from pygame import Rect
 from game_object import GameObject
 
