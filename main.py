@@ -215,32 +215,8 @@ class Game:
 
             if i.x - self.offsetX > -300:
                 if i.x - self.offsetX < self.width:
-                    if not self.player.y_Vel == 0:
-                        if self.player.y + self.player.height > i.y + 1:
-                            if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
-                                if self.player.y + self.player.height < i.y + i.height / 2:
-                                    self.player.y = i.y - self.player.height
-                                    self.player_on_the_ground = True
 
-                        if self.player.y < i.y + i.height:
-                            if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
-                                if self.player.y > i.y + i.height - i.height / 2:
-                                    self.player.y = i.y + i.height
-                                    self.player.y_jump = -5
-                                    self.player.y_Vel = 0
-
-                    if not self.player.x_Vel == 0:
-                        if self.player.x + self.player.width > i.x:
-                            if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
-                                if self.player.x + self.player.width < i.x + 10:
-                                    self.player.x_Vel = 0
-                                    self.player.x = i.x - self.player.width
-
-                        if self.player.x < i.x + i.width:
-                            if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
-                                if self.player.x > i.x + i.width - 10:
-                                    self.player.x_Vel = 0
-                                    self.player.x = i.x + i.width
+                    self.solve_collisions(i)
 
                     i.draw()
 
@@ -270,11 +246,42 @@ class Game:
 
             if not i.explosion:
 
-                if self.player.rect.colliderect(i.eyeshot):
+                if self.player.rect.colliderect(i.rect):
 
                     i.start_ticks_to_explosion = pygame.time.get_ticks()
                     i.start_ticks_for_animation = pygame.time.get_ticks()
                     i.explosion = True
+
+            self.solve_collisions(i)
+
+    def solve_collisions(self, i):
+
+        if not self.player.y_Vel == 0:
+            if self.player.y + self.player.height > i.y + 1:
+                if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
+                    if self.player.y + self.player.height < i.y + i.height / 2:
+                        self.player.y = i.y - self.player.height
+                        self.player_on_the_ground = True
+
+            if self.player.y < i.y + i.height:
+                if self.player.x + self.player.width > i.x and self.player.x < i.x + i.width:
+                    if self.player.y > i.y + i.height - i.height / 2:
+                        self.player.y = i.y + i.height
+                        self.player.y_jump = -5
+                        self.player.y_Vel = 0
+
+        if not self.player.x_Vel == 0:
+            if self.player.x + self.player.width > i.x:
+                if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
+                    if self.player.x + self.player.width < i.x + 10:
+                        self.player.x_Vel = 0
+                        self.player.x = i.x - self.player.width
+
+            if self.player.x < i.x + i.width:
+                if self.player.y + self.player.height > i.y and self.player.y < i.y + i.height:
+                    if self.player.x > i.x + i.width - 10:
+                        self.player.x_Vel = 0
+                        self.player.x = i.x + i.width
 
 
 if __name__ == "__main__":

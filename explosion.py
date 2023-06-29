@@ -50,38 +50,6 @@ class Rubble(GameObject):
         self.rect = Rect(self.x, self.y, self.height, self.width)
 
 
-class Zone(GameObject):
-
-    def __init__(self, x, y, width, height, image, game):
-
-        self.start_x = x
-        self.start_y = y
-
-        self.plus_size = 20
-
-        self.x = self.start_x - width / 2
-        self.y = self.start_y - height / 2
-        self.image = image
-
-        self.time_to_delete = 0.7
-
-        super().__init__(self.x, self.y, width, height, game, image)
-
-    def update(self):
-
-        if not self.plus_size < 0:
-            self.width += self.plus_size
-            self.height += self.plus_size
-
-        self.x = self.start_x - self.width / 2
-        self.y = self.start_y - self.height / 2
-        self.img = self.img = pygame.transform.scale(pygame.image.load(self.image), (self.width, self.height))
-
-        self.rect = Rect(self.x, self.y, self.width, self.height)
-
-        self.plus_size -= 0.3
-
-
 class Explosion:
 
     def __init__(self, x, y, game):
@@ -95,9 +63,6 @@ class Explosion:
         self.smoke = []
         self.rubble = []
 
-        self.danger_zone = []
-        self.danger_zone.append(Zone(x, y, 50, 50, "images/Elements_to_explosion/danger_zone.png", self.game))
-
         self.add_smoke_and_rubble()
 
         self.start_explosion = pygame.time.get_ticks()
@@ -105,7 +70,7 @@ class Explosion:
 
     def add_smoke_and_rubble(self):
 
-        for i in range(30):
+        for i in range(20):
             random_x_vel = random.uniform(-4, 4)
             random_y_vel = random.uniform(-9, -13)
             random_size = random.randint(60, 100)
@@ -113,7 +78,7 @@ class Explosion:
             self.smoke.append(Smoke(self.x, self.y, random_size, random_size, random_x_vel,
                               random_y_vel, f"images/Elements_to_explosion/smoke_{random_image}.png", self.game))
 
-        for i in range(40):
+        for i in range(30):
             random_x_vel = random.uniform(-5, 5)
             random_y_vel = random.uniform(-9, -13)
             random_size = random.randint(10, 20)
@@ -137,18 +102,10 @@ class Explosion:
 
             self.solve_collisions(i)
 
-        for i in self.danger_zone:
-            i.update()
-            if i.time_to_delete < seconds:
-                self.danger_zone.pop(self.danger_zone.index(i))
-
         if len(self.rubble) == 0 and len(self.smoke) == 0:
             self.end_explosion = True
 
     def draw(self):
-
-        for i in self.danger_zone:
-            i.draw()
 
         for i in self.smoke:
             i.draw()
