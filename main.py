@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 
+from background import Background
 from enemy import Enemy
 from player import Player
 from objects import Object
@@ -39,6 +40,8 @@ class Game:
         self.is_jump = False
 
         pygame.display.set_caption('platform_game')
+
+        self.background = Background(0, 0, self.width, self.height, self, "images/background.png")
 
         self.size_of_blocks = 70
 
@@ -197,19 +200,20 @@ class Game:
         for i in self.list_of_enemies:
             i.update()
 
-        for j in self.grass:
-            if j.x - self.offsetX > -300:
-                if j.x - self.offsetX < self.width:
-                    j.update()
+        for i in self.grass:
+            if i.x - self.offsetX > -300:
+                if i.x - self.offsetX < self.width:
+                    i.update()
 
-        for k in self.explosions:
-            k.update()
-            if k.end_explosion:
-                self.explosions.pop(self.explosions.index(k))
+        for i in self.explosions:
+            i.update()
+            if i.end_explosion:
+                self.explosions.pop(self.explosions.index(i))
 
     def solve_collision_and_draw(self):
 
         self.window.fill(BLUE)
+        self.background.draw()
 
         for i in self.objects:
 
@@ -217,28 +221,27 @@ class Game:
                 if i.x - self.offsetX < self.width:
 
                     self.solve_collisions(i)
-
                     i.draw()
 
-        for k in self.background_objects:
-            if k.x - self.offsetX > -300:
-                if k.x - self.offsetX < self.width:
-                    k.draw()
+        for i in self.background_objects:
+            if i.x - self.offsetX > -300:
+                if i.x - self.offsetX < self.width:
+                    i.draw()
 
         for i in self.grass:
             if i.x - self.offsetX > -300:
                 if i.x - self.offsetX < self.width:
                     i.draw()
 
-        for j in self.list_of_enemies:
-            if j.x - self.offsetX > -300:
-                if j.x - self.offsetX < self.width:
-                    j.draw()
+        for i in self.list_of_enemies:
+            if i.x - self.offsetX > -300:
+                if i.x - self.offsetX < self.width:
+                    i.draw()
 
         self.player.draw()
 
-        for k in self.explosions:
-            k.draw()
+        for i in self.explosions:
+            i.draw()
 
     def solve_collisions_with_enemies(self):
 

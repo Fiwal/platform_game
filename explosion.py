@@ -81,7 +81,7 @@ class Explosion:
         for i in range(30):
             random_x_vel = random.uniform(-5, 5)
             random_y_vel = random.uniform(-9, -13)
-            random_size = random.randint(10, 20)
+            random_size = random.randint(15, 20)
             random_image = random.randint(1, 3)
             self.rubble.append(Rubble(self.x, self.y, random_size, random_size, random_x_vel,
                                random_y_vel, f"images/Elements_to_explosion/rubble_{random_image}.png", self.game))
