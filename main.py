@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+import json
+
 from background import Background
 from enemy import Enemy
 from player import Player
@@ -15,6 +17,12 @@ GREEN = (0, 255, 0)
 BLUE = (0, 150, 200)
 WHITE = (255, 255, 255)
 YELLOW = (255, 255, 0)
+
+
+def open_json(file):
+
+    with open(file, 'r') as f:
+        return json.load(f)
 
 
 class Game:
@@ -34,7 +42,7 @@ class Game:
         self.run = True
 
         self.GRAVITY = 1
-        self.FPS = 80
+        self.FPS = 70
 
         self.player_on_the_ground = False
         self.is_jump = False
@@ -56,6 +64,8 @@ class Game:
 
         self.offsetX = 0
 
+        self.level = 1
+
     def add_enemies(self):
 
         self.list_of_enemies.append(Enemy(1900, 500, 50, 40, self, -3))
@@ -64,73 +74,63 @@ class Game:
 
     def add_objects(self):
 
-        self.add_ground(-8, 20, 8, 10)
-        self.add_ground(22, 40, 8, 10)
-        self.add_ground(40, 43, 7, 10)
-        self.add_ground(43, 50, 6, 10)
-        self.add_ground(67, 80, 8, 10)
-        self.add_ground(82, 106, 8, 10)
-        self.add_ground(112, 120, 8, 10)
+        grounds = open_json(f'levels/level_{self.level}/ground.json')
 
-        self.add_structures(structure1, 16, 5)
-        self.add_structures(structure2, 22, 5)
-        self.add_structures(structure3, 76, 4)
-        self.add_structures(structure4, 82, 4)
-        self.add_structures(structure5, 100, 4)
+        for i in grounds['elements']:
+            self.add_ground(i['start_x'], i['end_x'], i['start_y'],  i['end_y'])
 
-        self.objects.append(Object(52, 6, 210, 35, self, "images/platform.png"))
-        self.objects.append(Object(57, 5, 210, 35, self, "images/platform.png"))
-        self.objects.append(Object(62, 7, 210, 35, self, "images/platform.png"))
-        self.objects.append(Object(72, 6, 210, 35, self, "images/platform.png"))
-        self.objects.append(Object(107.5, 4, 210, 35, self, "images/platform.png"))
+        structures = open_json(f'levels/level_{self.level}/structures.json')
 
-        self.background_objects.append(Object(7.5, 3, 263, 350, self, "images/tree.png"))
-        self.background_objects.append(Object(4, 4, 211, 280, self, "images/tree.png"))
-        self.background_objects.append(Object(29, 3, 263, 350, self, "images/tree.png"))
-        self.background_objects.append(Object(68.5, 4, 211, 280, self, "images/tree.png"))
-        self.background_objects.append(Object(92, 3, 263, 350, self, "images/tree.png"))
+        for i in structures['elements']:
+            self.add_structures(i['number_of_structure'], i['x'], i['y'])
 
-        self.background_objects.append(Object(3, 7, self.size_of_blocks, self.size_of_blocks,
-                                              self, "images/mushroom.png"))
-        self.background_objects.append(Object(14, 7, self.size_of_blocks, self.size_of_blocks,
-                                              self, "images/mushroom.png"))
-        self.background_objects.append(Object(32, 7, self.size_of_blocks, self.size_of_blocks,
-                                              self, "images/mushroom.png"))
-        self.background_objects.append(Object(48, 5, self.size_of_blocks, self.size_of_blocks,
-                                              self, "images/mushroom.png"))
-        self.background_objects.append(Object(91, 7, self.size_of_blocks, self.size_of_blocks,
-                                              self, "images/mushroom.png"))
+        platforms = open_json(f'levels/level_{self.level}/platforms.json')
 
-        self.background_objects.append(Object(18.5, 3, 70, 140, self, "images/plant.png"))
-        self.background_objects.append(Object(57.5, 3, 70, 140, self, "images/plant.png"))
-        self.background_objects.append(Object(63.5, 5, 70, 140, self, "images/plant.png"))
-        self.background_objects.append(Object(104.5, 2, 70, 140, self, "images/plant.png"))
+        for i in platforms['elements']:
+            self.objects.append(Object(i['x'], i['y'], 210, 35, self, "images/blocks_and_platforms/platform.png"))
 
-        self.add_grass(-8, 16, 7)
-        self.add_grass(29, 35, 7)
-        self.add_grass(40, 43, 6)
-        self.add_grass(43, 50, 5)
-        self.add_grass(68, 73, 7)
-        self.add_grass(90, 97, 7)
+        grass = open_json(f'levels/level_{self.level}/grass.json')
+
+        for i in grass['elements']:
+            self.add_grass(i['start_x'], i['end_x'], i['y'])
+
+        trees = open_json(f'levels/level_{self.level}/trees.json')
+
+        for i in trees['elements']:
+            if i['size'] == 'large':
+                self.background_objects.append(Object(i['x'], i['y'], 263, 350, self, "images/nature/tree.png"))
+            elif i['size'] == 'small':
+                self.background_objects.append(Object(i['x'], i['y'], 211, 280, self, "images/nature/tree.png"))
+
+        mushrooms = open_json(f'levels/level_{self.level}/mushrooms.json')
+
+        for i in mushrooms['elements']:
+            self.background_objects.append(Object(i['x'], i['y'], self.size_of_blocks, self.size_of_blocks, self,
+                                                  "images/nature/mushroom.png"))
+
+        plants = open_json(f'levels/level_{self.level}/plants.json')
+
+        for i in plants['elements']:
+            self.background_objects.append(Object(i['x'], i['y'], 70, 140, self, "images/nature/plant.png"))
 
     def add_ground(self, start_x, end_x, start_y, end_y):
 
         for i in range(start_x, end_x):
             self.objects.append(Object(i, start_y, self.size_of_blocks,
-                                       self.size_of_blocks, self, "images/ground1.png"))
+                                self.size_of_blocks, self, "images/blocks_and_platforms/ground/ground1.png"))
             for j in range(start_y + 1, end_y):
                 self.objects.append(Object(i, j, self.size_of_blocks,
-                                           self.size_of_blocks, self, "images/ground2.png"))
+                                    self.size_of_blocks, self, "images/blocks_and_platforms/ground/ground2.png"))
 
-    def add_structures(self, structure, start_x, start_y):
+    def add_structures(self, number_of_structure, start_x, start_y):
 
-        for i in range(len(structure)):
+        for i in range(len(all_structures[number_of_structure])):
 
-            for j in range(len(structure[i])):
+            for j in range(len(all_structures[number_of_structure][i])):
 
-                if structure[i][j] == "B1":
+                if all_structures[number_of_structure][i][j] == "B1":
                     self.objects.append(Object(start_x + j, start_y + i, self.size_of_blocks,
-                                               self.size_of_blocks, self, "images/block1.png"))
+                                               self.size_of_blocks, self, "images/blocks_and_platforms/block1.png"))
 
     def add_grass(self, start_x, end_x, y):
 

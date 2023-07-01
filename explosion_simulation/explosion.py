@@ -1,53 +1,8 @@
 import random
 import pygame
-from pygame import Rect
-from game_object import GameObject
 
-
-class Smoke(GameObject):
-
-    def __init__(self, x, y, width, height, x_vel, y_vel, image, game):
-
-        super().__init__(x, y, width, height, game, image)
-
-        self.x_vel = x_vel
-        self.y_vel = y_vel
-
-    def update(self):
-
-        if not self.y_vel > 0:
-            self.y_vel += 0.1
-            self.y_vel *= 0.99
-            self.y += self.y_vel
-
-        self.x_vel *= 0.99
-        self.x += self.x_vel
-
-
-class Rubble(GameObject):
-
-    def __init__(self, x, y, width, height, x_vel, y_vel, image, game):
-
-        super().__init__(x, y, width, height, game, image)
-
-        self.x_vel = x_vel
-        self.y_vel = y_vel
-        self.game = game
-        self.time_to_delete = random.randint(10, 30)
-
-    def update(self):
-
-        if not self.y_vel > 0:
-            self.y_vel += 0.15
-
-        self.y_vel += self.game.GRAVITY / 10
-
-        self.y += self.y_vel
-
-        self.x_vel *= 0.99
-        self.x += self.x_vel
-
-        self.rect = Rect(self.x, self.y, self.height, self.width)
+from explosion_simulation.rubble import Rubble
+from explosion_simulation.smoke import Smoke
 
 
 class Explosion:
@@ -70,8 +25,8 @@ class Explosion:
 
     def add_smoke_and_rubble(self):
 
-        for i in range(20):
-            random_x_vel = random.uniform(-4, 4)
+        for i in range(30):
+            random_x_vel = random.uniform(-6, 6)
             random_y_vel = random.uniform(-9, -13)
             random_size = random.randint(60, 100)
             random_image = random.randint(1, 3)
@@ -79,8 +34,8 @@ class Explosion:
                               random_y_vel, f"images/Elements_to_explosion/smoke_{random_image}.png", self.game))
 
         for i in range(30):
-            random_x_vel = random.uniform(-5, 5)
-            random_y_vel = random.uniform(-9, -13)
+            random_x_vel = random.uniform(-8, 8)
+            random_y_vel = random.uniform(-15, -20)
             random_size = random.randint(15, 20)
             random_image = random.randint(1, 3)
             self.rubble.append(Rubble(self.x, self.y, random_size, random_size, random_x_vel,
@@ -90,7 +45,7 @@ class Explosion:
 
         for i in self.smoke:
             i.update()
-            if i.y_vel > 0:
+            if i.y_vel > -1:
                 self.smoke.pop(self.smoke.index(i))
                 i.x_vel = 0
 
@@ -123,6 +78,7 @@ class Explosion:
                         if j.y + j.height < i.y + i.height:
                             j.y = i.y - j.height
                             j.y_vel = 0
+                            j.on_the_ground = True
 
             if not j.x_vel == 0:
                 if j.x + j.width > i.x:

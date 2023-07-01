@@ -1,14 +1,14 @@
 import pygame
 from pygame import Rect
 from game_object import GameObject
-from explosion import Explosion
+from explosion_simulation.explosion import Explosion
 
 
 class Enemy(GameObject):
 
     def __init__(self, x: int, y: int, width: int, height: int, game, x_speed):
 
-        super().__init__(x, y, width, height, game, "images/enemy.png")
+        super().__init__(x, y, width, height, game, "images/enemy/enemy.png")
 
         self.game = game
         self.x_Vel = x_speed
@@ -71,11 +71,11 @@ class Enemy(GameObject):
         if seconds > 0.05:
             if self.explosion_type_of_enemy == 1:
 
-                self.img = pygame.transform.scale(pygame.image.load("images/enemy.png"), (self.width, self.height))
+                self.img = pygame.transform.scale(pygame.image.load("images/enemy/enemy.png"), (self.width, self.height))
                 self.explosion_type_of_enemy = 2
 
             elif self.explosion_type_of_enemy == 2:
-                self.img = pygame.transform.scale(pygame.image.load("images/explosion_enemy.png"),
+                self.img = pygame.transform.scale(pygame.image.load("images/enemy/explosion_enemy.png"),
                                                   (self.width, self.height))
                 self.explosion_type_of_enemy = 1
 

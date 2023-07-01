@@ -7,7 +7,7 @@ class Grass(GameObject):
     def __init__(self, x, y: int, width: int, height: int, game):
 
         self.type_of_grass = 1
-        self.image = f"images/grass{self.type_of_grass}.png"
+        self.image = f"images/nature/grass/grass{self.type_of_grass}.png"
 
         super().__init__(x * game.size_of_blocks, y * game.size_of_blocks,
                          width, height, game, self.image)
@@ -23,12 +23,12 @@ class Grass(GameObject):
             self.start_ticks = pygame.time.get_ticks()
 
             if self.type_of_grass == 1:
-                self.image = f"images/grass{self.type_of_grass}.png"
+                self.image = f"images/nature/grass/grass{self.type_of_grass}.png"
                 self.img = pygame.transform.scale(pygame.image.load(self.image), (self.width, self.height))
                 self.type_of_grass = 2
 
             elif self.type_of_grass == 2:
-                self.image = f"images/grass{self.type_of_grass}.png"
+                self.image = f"images/nature/grass/grass{self.type_of_grass}.png"
                 self.img = pygame.transform.scale(pygame.image.load(self.image), (self.width, self.height))
                 self.type_of_grass = 1
 

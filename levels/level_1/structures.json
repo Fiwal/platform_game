@@ -1,0 +1,29 @@
+{
+  "elements": [
+    {
+      "number_of_structure": 0,
+      "x": 16,
+      "y": 5
+    },
+    {
+      "number_of_structure": 1,
+      "x": 22,
+      "y": 5
+    },
+    {
+      "number_of_structure": 2,
+      "x": 76,
+      "y": 4
+    },
+    {
+      "number_of_structure": 3,
+      "x": 82,
+      "y": 4
+    },
+    {
+      "number_of_structure": 4,
+      "x": 100,
+      "y": 4
+    }
+  ]
+}
