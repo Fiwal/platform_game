@@ -68,9 +68,10 @@ class Game:
 
     def add_enemies(self):
 
-        self.list_of_enemies.append(Enemy(1900, 500, 50, 40, self, -3))
-        self.list_of_enemies.append(Enemy(2500, 500, 50, 40, self, 3))
-        self.list_of_enemies.append(Enemy(6300, 500, 50, 40, self, 3))
+        enemies = open_json(f'levels/level_{self.level}/enemies.json')
+
+        for i in enemies['elements']:
+            self.list_of_enemies.append(Enemy(i['x'], i['y'], 50, 40, self, i['start_vel_x']))
 
     def add_objects(self):
 
