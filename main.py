@@ -42,7 +42,7 @@ class Game:
         self.run = True
 
         self.GRAVITY = 1
-        self.FPS = 70
+        self.FPS = 80
 
         self.player_on_the_ground = False
         self.is_jump = False
@@ -57,7 +57,7 @@ class Game:
         self.background_objects = []
         self.grass = []
 
-        self.player = Player(self.width / 4, 300, 50, 70, self)
+        self.player = Player(350, 300, 50, 70, self)
         self.list_of_enemies = []
 
         self.explosions = []
@@ -132,6 +132,14 @@ class Game:
                 if all_structures[number_of_structure][i][j] == "B1":
                     self.objects.append(Object(start_x + j, start_y + i, self.size_of_blocks,
                                                self.size_of_blocks, self, "images/blocks_and_platforms/block1.png"))
+                elif all_structures[number_of_structure][i][j] == "G1":
+                    self.objects.append(Object(start_x + j, start_y + i, self.size_of_blocks,
+                                               self.size_of_blocks, self,
+                                               "images/blocks_and_platforms/ground/ground1.png"))
+                elif all_structures[number_of_structure][i][j] == "G2":
+                    self.objects.append(Object(start_x + j, start_y + i, self.size_of_blocks,
+                                               self.size_of_blocks, self,
+                                               "images/blocks_and_platforms/ground/ground2.png"))
 
     def add_grass(self, start_x, end_x, y):
 
@@ -156,6 +164,8 @@ class Game:
 
             self.clock.tick(self.FPS)
             pygame.display.flip()
+
+            print(self.player.x, self.player.x / 70)
 
         pygame.quit()
 

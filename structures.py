@@ -18,5 +18,10 @@ structure4 = [["0", "0",  "0", "B1", "B1", "B1", "0", "0", "0", "0", "0", "0", "
                "0"],
               ["B1", "B1", "B1", "B1", "B1", "B1", "0", "0", "0", "0", "0", "0", "B1", "B1", "B1", "B1", "B1",
                "B1"]]
+structure5 = [["0", "0", "0", "0", "G1", "G1"],
+              ["0", "0", "G1", "G1", "G2", "G2"],
+              ["G1", "G1", "G2", "G2", "G2", "G2"],
+              ["G2", "G2", "G2", "G2", "G2", "G2", "G2"],
+              ["G2", "G2", "G2", "G2", "G2", "G2", "G2"]]
 
-all_structures = [structure0, structure1, structure2, structure3, structure4]
+all_structures = [structure0, structure1, structure2, structure3, structure4, structure5]

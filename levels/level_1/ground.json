@@ -38,10 +38,21 @@
     },
     {
       "start_x": 112,
-      "end_x": 120,
+      "end_x": 130,
+      "start_y": 8,
+      "end_y": 10
+    },
+    {
+      "start_x": 136,
+      "end_x": 144,
+      "start_y": 4,
+      "end_y": 10
+    },
+    {
+      "start_x": 150,
+      "end_x": 160,
       "start_y": 8,
       "end_y": 10
     }
   ]
-
 }
