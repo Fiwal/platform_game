@@ -55,7 +55,7 @@ class Enemy(GameObject):
 
     def explosion_enemy(self):
 
-        self.after_explosion_animation()
+        self.before_explosion_animation()
 
         self.x_Vel = 0
         seconds = (pygame.time.get_ticks() - self.start_ticks_to_explosion) / 1000
@@ -71,7 +71,8 @@ class Enemy(GameObject):
         if seconds > 0.05:
             if self.explosion_type_of_enemy == 1:
 
-                self.img = pygame.transform.scale(pygame.image.load("images/enemy/enemy.png"), (self.width, self.height))
+                self.img = pygame.transform.scale(pygame.image.load("images/enemy/enemy.png"),
+                                                  (self.width, self.height))
                 self.explosion_type_of_enemy = 2
 
             elif self.explosion_type_of_enemy == 2:
