@@ -64,7 +64,7 @@ class Enemy(GameObject):
             self.game.explosions.append(Explosion(self.x + self.width / 2, self.y, self.game))
             self.game.list_of_enemies.pop(self.game.list_of_enemies.index(self))
 
-    def after_explosion_animation(self):
+    def before_explosion_animation(self):
 
         seconds = (pygame.time.get_ticks() - self.start_ticks_for_animation) / 1000
 
