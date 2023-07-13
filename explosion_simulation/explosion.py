@@ -48,14 +48,16 @@ class Explosion:
             if i.y_vel > -1:
                 self.smoke.pop(self.smoke.index(i))
                 i.x_vel = 0
+                del i
 
         seconds = (pygame.time.get_ticks() - self.start_explosion) / 1000
         for i in self.rubble:
             i.update()
-            if i.time_to_delete < seconds:
-                self.rubble.pop(self.rubble.index(i))
 
             self.solve_collisions(i)
+            if i.time_to_delete < seconds:
+                self.rubble.pop(self.rubble.index(i))
+                del i
 
         if len(self.rubble) == 0 and len(self.smoke) == 0:
             self.end_explosion = True
