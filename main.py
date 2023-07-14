@@ -165,8 +165,6 @@ class Game:
             self.clock.tick(self.FPS)
             pygame.display.flip()
 
-            print(self.player.x, self.player.x / 70)
-
         pygame.quit()
 
     def move_player(self):
