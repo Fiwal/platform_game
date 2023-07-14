@@ -2,7 +2,7 @@ import pygame
 from pygame import Rect
 
 
-class Background:
+class StaticObject:
 
     def __init__(self, x, y, width: int, height: int, game, image_src):
 

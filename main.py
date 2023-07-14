@@ -3,7 +3,7 @@ from pygame.locals import *
 
 import json
 
-from background import Background
+from static_objects import StaticObject
 from enemy import Enemy
 from player import Player
 from objects import Object
@@ -42,14 +42,14 @@ class Game:
         self.run = True
 
         self.GRAVITY = 1
-        self.FPS = 63
+        self.FPS = 60
 
         self.player_on_the_ground = False
         self.is_jump = False
 
         pygame.display.set_caption('platform_game')
 
-        self.background = Background(0, 0, self.width, self.height, self, "images/background.png")
+        self.background = StaticObject(0, 0, self.width, self.height, self, "images/background.png")
 
         self.size_of_blocks = 70
 
@@ -154,18 +154,21 @@ class Game:
 
         while self.run:
 
+            if self.player.y - self.player.height > self.width:
+                self.player.lives -= self.player.start_lives
+
             self.check_if_close_game()
             self.move_player()
             self.update()
             self.solve_collisions_with_enemies()
 
-            if self.player.y - self.player.height > self.width:
+            if self.player.lives == 0:
                 self.run = False
 
             self.clock.tick(self.FPS)
             pygame.display.flip()
 
-        pygame.quit()
+        # pygame.quit()
 
     def move_player(self):
 
@@ -251,6 +254,8 @@ class Game:
 
         for i in self.explosions:
             i.draw()
+
+        self.player.draw_hearts()
 
     def solve_collisions_with_enemies(self):
 

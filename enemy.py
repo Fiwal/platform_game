@@ -63,6 +63,7 @@ class Enemy(GameObject):
         if seconds > 0.3:
             self.game.explosions.append(Explosion(self.x + self.width / 2, self.y, self.game))
             self.game.list_of_enemies.pop(self.game.list_of_enemies.index(self))
+            self.game.player.lives -= 1
 
     def before_explosion_animation(self):
 
