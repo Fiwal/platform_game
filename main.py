@@ -42,7 +42,7 @@ class Game:
         self.run = True
 
         self.GRAVITY = 1
-        self.FPS = 65
+        self.FPS = 60
 
         self.player_on_the_ground = False
         self.is_jump = False
