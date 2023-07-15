@@ -155,7 +155,7 @@ class Game:
         while self.run:
 
             if self.player.y - self.player.height > self.width:
-                self.player.lives -= self.player.start_lives
+                self.player.lives = 0
 
             self.check_if_close_game()
             self.move_player()
@@ -168,7 +168,7 @@ class Game:
             self.clock.tick(self.FPS)
             pygame.display.flip()
 
-        # pygame.quit()
+        pygame.quit()
 
     def move_player(self):
 
