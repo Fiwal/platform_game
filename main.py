@@ -36,7 +36,6 @@ class Game:
         self.window = pygame.display.set_mode((self.width, self.height))
 
         self.clock = pygame.time.Clock()
-
         # init game:
 
         self.run = True
@@ -48,6 +47,7 @@ class Game:
         self.is_jump = False
 
         pygame.display.set_caption('platform_game')
+        pygame.display.set_icon(pygame.image.load('images/icon.png'))
 
         self.background = StaticObject(0, 0, self.width, self.height, self, "images/background.png")
 
