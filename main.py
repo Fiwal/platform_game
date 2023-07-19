@@ -47,7 +47,7 @@ class Game:
         self.is_jump = False
 
         pygame.display.set_caption('platform_game')
-        pygame.display.set_icon(pygame.image.load('images/icon.png'))
+        pygame.display.set_icon(pygame.image.load("images/player/player.png"))
 
         self.background = StaticObject(0, 0, self.width, self.height, self, "images/background.png")
 
@@ -57,7 +57,7 @@ class Game:
         self.background_objects = []
         self.grass = []
 
-        self.player = Player(350, 300, 50, 70, self)
+        self.player = Player(350, 300, 60, 60, self)
         self.list_of_enemies = []
 
         self.explosions = []
@@ -71,7 +71,7 @@ class Game:
         enemies = open_json(f'levels/level_{self.level}/enemies.json')
 
         for i in enemies['elements']:
-            self.list_of_enemies.append(Enemy(i['x'], i['y'], 50, 40, self, i['start_vel_x']))
+            self.list_of_enemies.append(Enemy(i['x'], i['y'], 50, 42, self, i['start_vel_x']))
 
     def add_objects(self):
 
